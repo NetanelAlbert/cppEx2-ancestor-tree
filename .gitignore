@@ -1,6 +1,9 @@
 # Solution
 solution*
 
+#vscode
+.vscode/
+
 # Prerequisites
 *.d
 
