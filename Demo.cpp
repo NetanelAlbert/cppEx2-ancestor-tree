@@ -16,7 +16,9 @@ int main() {
 	 .addMother("Yosef", "Rachel")   // Tells the tree that the mother of Yosef is Rachel.
 	 .addFather("Yaakov", "Isaac")
 	 .addMother("Yaakov", "Rivka")
+	 .addFather("Rivka", "Betuel")
 	 .addFather("Isaac", "Avraham")
+	 .addMother("Isaac", "Sara")
 	 .addFather("Avraham", "Terah");
 
 	T.display();                        // displays the tree in a human-friendly format.
