@@ -1,6 +1,5 @@
 
 #include "FamilyTree.hpp"
-//#include <iostream>
 
 using namespace std;
 using namespace family;
