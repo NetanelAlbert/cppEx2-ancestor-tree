@@ -8,51 +8,47 @@
 using namespace std;
 using namespace family;
 
-Tree &Tree::addFather(string son, string father){
-    if(son == _name){
-        if(_father == nullptr){
-            _father = new Tree(father, father_type);
-            return *this;
-        }
-        else
-            throw runtime_error(son+" already has a father");
-    }
-    if(_father != nullptr){
-        try{
-            _father->addFather(son, father);
-            return  *this;
-        } catch (out_of_range &er){}
-    }
-    if(_mother != nullptr){
-        _mother->addFather(son, father);
-        return  *this;
-    }
-    throw out_of_range(son+" dosn't exist");
+Tree *Tree::findNode(const string &name){
+    if(_name == name)
+        return this;
+
+    Tree *ans = nullptr;
+    if(_father != nullptr)
+        ans = _father->findNode(name);
+        
+    if(ans == nullptr && _mother != nullptr)
+        ans = _mother->findNode(name); 
+
+    return ans;               
 }
 
-Tree &Tree::addMother(string son, string mother){
-    if(son == _name){
-        if(_mother == nullptr){
-            _mother = new Tree(mother, mother_type);
-            return  *this;
-        }
-        else
-            throw runtime_error(son+" already has a mother");
-    }
-    if(_father != nullptr){
-        try{
-            _father->addMother(son, mother);
-            return  *this;
-        } catch (out_of_range &er){}
-    }
-    if(_mother != nullptr){
-        _mother->addMother(son, mother);
-        return  *this;
-    }
-    throw out_of_range(son+" dosn't exist");
+Tree &Tree::addFather(const string &son,const string &father){
+    Tree *node = findNode(son);
+    if(node == nullptr)
+        throw out_of_range(son+" dosn't exist");
+
+
+    if(node->_father != nullptr)    
+        throw runtime_error(son+" already has a father");
+
+    node->_father = new Tree(father, father_type);
+    return *this;
 }
 
-string Tree::relation(string ancestor){
+Tree &Tree::addMother(const string &son,const string &mother){
+    Tree *node = findNode(son);
+    if(node == nullptr)
+        throw out_of_range(son+" dosn't exist");
+
+
+    if(node->_mother != nullptr)    
+        throw runtime_error(son+" already has a mother");
+
+    node->_mother = new Tree(mother, mother_type);
+    return *this;
+}
+
+string Tree::relation(const string &ancestor) const{
     if(ancestor == _name){
         return "me";
     }
@@ -80,9 +76,10 @@ string Tree::relation(string ancestor){
     return ans;
 }
 
-string Tree::find(string description){
+string Tree::find(const string &description) const{
     if(_type == root_type && description == "me")
         return _name;
+
     if(description == "father"){
         
         if(_father != nullptr)
@@ -122,7 +119,7 @@ string Tree::find(string description){
     throw runtime_error("wrong expression");
 }
 
-bool Tree::remove(string ancestor){
+bool Tree::remove(const string &ancestor){
     if(_type == root_type && _name == ancestor)
         throw invalid_argument("can't remove root ("+ancestor+")");
     
@@ -144,7 +141,7 @@ bool Tree::remove(string ancestor){
     return ans;
 }
 
-void Tree::display(size_t tabs){
+void Tree::display(const size_t tabs) const{
     if(tabs == 0)
         cout << "Display "<<_name<<" tree. Father = up, mother = down.\n" << endl;
     
@@ -153,11 +150,14 @@ void Tree::display(size_t tabs){
     
     for (size_t i = 0; i < tabs; i++)
         cout << '\t';
+
     if(_type == father_type)
         cout << "/``";
     if(_type == mother_type)
         cout << "\\_";
+
     cout << _name << endl;
+    
     if(_mother != nullptr)
         _mother->display(tabs+1);
     

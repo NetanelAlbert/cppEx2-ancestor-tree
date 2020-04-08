@@ -12,21 +12,23 @@ namespace family{
     };
 
     class Tree{
-        string _name;
-        Type _type;
+        const string _name;
+        const Type _type;
         Tree *_father, *_mother;
+
+        Tree *findNode(const string &);
     public:
         Tree(string name, Type type = root_type): 
             _name(name), 
             _father(nullptr), 
             _mother(nullptr), 
             _type(type) { };
-        Tree &addFather(string , string father);   // Tells the tree that the father of 'son' is 'father'.
-	    Tree &addMother(string son, string mother);  // Tells the tree that the mother of 'son' is 'mother'.
-        void display(size_t tabs = 0);
-        string relation(string ancestor);
-        string find(string description);
-        bool remove(string ancestor);
+        Tree &addFather(const string &,const string &);   // Tells the tree that the father of 'son' is 'father'.
+	    Tree &addMother(const string &,const string &);  // Tells the tree that the mother of 'son' is 'mother'.
+        void display(size_t tabs = 0) const;
+        string relation(const string &) const;
+        string find(const string &) const;
+        bool remove(const string &);
         ~Tree(){
             if(_father != nullptr)
                 delete _father;
