@@ -1,3 +1,7 @@
+/**
+ * Created by Netanel Albert
+ * Date: 2020-4 
+ */
 
 #include "FamilyTree.hpp"
 
@@ -7,7 +11,7 @@ using namespace family;
 Tree &Tree::addFather(string son, string father){
     if(son == _name){
         if(_father == nullptr){
-            _father = new Tree(father, 'm');
+            _father = new Tree(father, father_type);
             return *this;
         }
         else
@@ -29,7 +33,7 @@ Tree &Tree::addFather(string son, string father){
 Tree &Tree::addMother(string son, string mother){
     if(son == _name){
         if(_mother == nullptr){
-            _mother = new Tree(mother, 'f');
+            _mother = new Tree(mother, mother_type);
             return  *this;
         }
         else
@@ -77,13 +81,16 @@ string Tree::relation(string ancestor){
 }
 
 string Tree::find(string description){
-    if(description.at(0) == 'f'){
+    if(_type == root_type && description == "me")
+        return _name;
+    if(description == "father"){
+        
         if(_father != nullptr)
             return _father->_name;
         else
             throw out_of_range("Requested relation dosn't exist");
     }
-    if(description.at(0) == 'm'){
+    if(description == "mother"){
         if(_mother != nullptr)
             return _mother->_name;
         else
@@ -92,11 +99,14 @@ string Tree::find(string description){
     if(description.at(0) == 'g'){
         string tmp;
         try{
+            string chk = description.substr(0,5);
+            if(chk != "grand" && chk != "great")
+                goto THROW;
             tmp = description.substr(5); //remove "great"/"grand"
             if(tmp.at(0) == '-')
                 tmp.erase(0,1); //remove the '-' after "great" 
         } catch(out_of_range& ex){ // throwed by string
-            throw runtime_error("wrong expression");
+            goto THROW;
         }
 
         if(_father != nullptr)
@@ -108,11 +118,15 @@ string Tree::find(string description){
 
         throw out_of_range("Requested relation dosn't exist");
     }
+    THROW:
     throw runtime_error("wrong expression");
 }
 
 bool Tree::remove(string ancestor){
-    if(_father != nullptr && _father->_name == ancestor){
+    if(_type == root_type && _name == ancestor)
+        throw invalid_argument("can't remove root ("+ancestor+")");
+    
+        if(_father != nullptr && _father->_name == ancestor){
         delete _father;
         _father = nullptr;
         return true;
@@ -122,8 +136,12 @@ bool Tree::remove(string ancestor){
         _mother = nullptr;
         return true;
     }
-    return (_father != nullptr && _father->remove(ancestor)) 
-        || (_mother != nullptr && _mother->remove(ancestor));
+    bool ans = (_father != nullptr && _father->remove(ancestor)) 
+            || (_mother != nullptr && _mother->remove(ancestor));
+    if(!ans && this->_type == root_type)
+        throw invalid_argument(ancestor + " wasn't found");
+
+    return ans;
 }
 
 void Tree::display(size_t tabs){
@@ -135,9 +153,9 @@ void Tree::display(size_t tabs){
     
     for (size_t i = 0; i < tabs; i++)
         cout << '\t';
-    if(_sex == 'm')
+    if(_type == father_type)
         cout << "/``";
-    if(_sex == 'f')
+    if(_type == mother_type)
         cout << "\\_";
     cout << _name << endl;
     if(_mother != nullptr)

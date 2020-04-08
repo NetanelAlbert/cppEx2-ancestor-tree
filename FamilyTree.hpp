@@ -7,20 +7,22 @@
 
 using namespace std;
 namespace family{
+    enum Type{
+        root_type, father_type, mother_type
+    };
+
     class Tree{
         string _name;
-        char _sex; // m=male, f=female
+        Type _type;
         Tree *_father, *_mother;
     public:
-        Tree(string name, char sex = 0): 
+        Tree(string name, Type type = root_type): 
             _name(name), 
             _father(nullptr), 
             _mother(nullptr), 
-            _sex(sex) {
-            cout<<"dbug: "<<_name<<" was created"<<endl;
-        };
-        Tree &addFather(string son, string father);   // Tells the tree that the father of Yosef is Yaakov.
-	    Tree &addMother(string son, string mother);  // Tells the tree that the mother of Yosef is Rachel.
+            _type(type) { };
+        Tree &addFather(string , string father);   // Tells the tree that the father of 'son' is 'father'.
+	    Tree &addMother(string son, string mother);  // Tells the tree that the mother of 'son' is 'mother'.
         void display(size_t tabs = 0);
         string relation(string ancestor);
         string find(string description);
@@ -32,7 +34,6 @@ namespace family{
                 delete _mother;
         };
     };
-
 };
 
 #endif
