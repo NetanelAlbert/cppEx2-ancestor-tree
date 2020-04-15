@@ -38,3 +38,4 @@ solution*
 *.app
 demo
 test
+.idea/
